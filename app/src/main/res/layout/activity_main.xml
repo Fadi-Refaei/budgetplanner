@@ -279,6 +279,25 @@
                 android:textColor="@color/text_primary"
                 android:layout_marginBottom="12dp" />
 
+            <!-- SEARCH BAR - NEW ADDITION -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="3dp"
+                app:cardBackgroundColor="@color/card_background">
+
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/searchView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:queryHint="Search transactions..."
+                    android:iconifiedByDefault="false"
+                    android:layout_margin="8dp" />
+
+            </androidx.cardview.widget.CardView>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/transactionsRecyclerView"
                 android:layout_width="match_parent"

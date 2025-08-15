@@ -186,4 +186,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_CATEGORIES, null, values);
         db.close();
     }
+
 }
