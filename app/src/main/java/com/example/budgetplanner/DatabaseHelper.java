@@ -186,5 +186,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_CATEGORIES, null, values);
         db.close();
     }
+    public long updateTransaction(Transaction transaction) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(COLUMN_TYPE, transaction.getType());
+        values.put(COLUMN_CATEGORY, transaction.getCategory());
+        values.put(COLUMN_AMOUNT, transaction.getAmount());
+        values.put(COLUMN_DESCRIPTION, transaction.getDescription());
+        values.put(COLUMN_DATE, transaction.getDate());
+
+        long result = db.update(TABLE_TRANSACTIONS, values, COLUMN_ID + " = ?",
+                new String[]{String.valueOf(transaction.getId())});
+        db.close();
+        return result;
+    }
 
 }

@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView transactionsRecyclerView;
     private TransactionAdapter transactionAdapter;
     private List<Transaction> transactions;
-    private List<Transaction> allTransactions; // Keep original list for search
+    private List<Transaction> allTransactions;
     private SearchView searchView;
 
     @Override
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         initializeViews();
         setupRecyclerView();
         setupButtonListeners();
-        setupSearchView(); // NEW METHOD
+        setupSearchView();
         updateBudgetSummary();
     }
 
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         totalExpenseText = findViewById(R.id.totalExpenseText);
         remainingBudgetText = findViewById(R.id.remainingBudgetText);
         transactionsRecyclerView = findViewById(R.id.transactionsRecyclerView);
-        searchView = findViewById(R.id.searchView); // NEW LINE
+        searchView = findViewById(R.id.searchView);
 
         Button addIncomeBtn = findViewById(R.id.addIncomeBtn);
         Button addExpenseBtn = findViewById(R.id.addExpenseBtn);
@@ -52,18 +52,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        allTransactions = dbHelper.getAllTransactions(); // CHANGED: Store all transactions
-        transactions = new ArrayList<>(allTransactions); // CHANGED: Create copy for filtering
-        transactionAdapter = new TransactionAdapter(transactions, this::deleteTransaction);
+        allTransactions = dbHelper.getAllTransactions();
+        transactions = new ArrayList<>(allTransactions);
+        transactionAdapter = new TransactionAdapter(transactions, this::deleteTransaction, this::editTransaction);
         transactionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         transactionsRecyclerView.setAdapter(transactionAdapter);
     }
 
     private void setupButtonListeners() {
-        // Already handled in initializeViews()
     }
 
-    // NEW METHOD: Setup search functionality
     private void setupSearchView() {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -80,15 +78,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // NEW METHOD: Filter transactions based on search query
     private void filterTransactions(String query) {
         transactions.clear();
 
         if (query.isEmpty()) {
-            // If search is empty, show all transactions
             transactions.addAll(allTransactions);
         } else {
-            // Filter transactions containing the search query
             String lowerCaseQuery = query.toLowerCase();
             for (Transaction transaction : allTransactions) {
                 if (transaction.getDescription().toLowerCase().contains(lowerCaseQuery) ||
@@ -112,6 +107,17 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void editTransaction(Transaction transaction) {
+        Intent intent = new Intent(this, AddTransactionActivity.class);
+        intent.putExtra("TRANSACTION_TYPE", transaction.getType());
+        intent.putExtra("EDIT_MODE", true);
+        intent.putExtra("TRANSACTION_ID", transaction.getId());
+        intent.putExtra("TRANSACTION_CATEGORY", transaction.getCategory());
+        intent.putExtra("TRANSACTION_AMOUNT", transaction.getAmount());
+        intent.putExtra("TRANSACTION_DESCRIPTION", transaction.getDescription());
+        startActivity(intent);
+    }
+
     private void deleteTransaction(Transaction transaction) {
         dbHelper.deleteTransaction(transaction.getId());
         refreshTransactions();
@@ -120,9 +126,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void refreshTransactions() {
         allTransactions.clear();
-        allTransactions.addAll(dbHelper.getAllTransactions()); // CHANGED: Refresh all transactions
+        allTransactions.addAll(dbHelper.getAllTransactions());
 
-        // Reapply current search filter
         String currentQuery = searchView.getQuery().toString();
         filterTransactions(currentQuery);
     }
@@ -136,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
         totalExpenseText.setText(String.format("Expenses: $%.2f", totalExpense));
         remainingBudgetText.setText(String.format("Remaining: $%.2f", remaining));
 
-        // Color coding for remaining budget
         if (remaining < 0) {
             remainingBudgetText.setTextColor(getColor(android.R.color.holo_red_dark));
         } else {

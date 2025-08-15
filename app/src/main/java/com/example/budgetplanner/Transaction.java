@@ -2,16 +2,14 @@ package com.example.budgetplanner;
 
 public class Transaction {
     private int id;
-    private String type; // "Income" or "Expense"
+    private String type;
     private String category;
     private double amount;
     private String description;
     private String date;
 
-    // Default constructor
     public Transaction() {}
 
-    // Constructor with parameters
     public Transaction(String type, String category, double amount, String description, String date) {
         this.type = type;
         this.category = category;
@@ -20,7 +18,6 @@ public class Transaction {
         this.date = date;
     }
 
-    // Getter and setter methods
     public int getId() {
         return id;
     }

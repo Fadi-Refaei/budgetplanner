@@ -12,14 +12,20 @@ import java.util.List;
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder> {
     private List<Transaction> transactions;
     private OnTransactionDeleteListener deleteListener;
+    private OnTransactionEditListener editListener;
 
     public interface OnTransactionDeleteListener {
         void onDelete(Transaction transaction);
     }
 
-    public TransactionAdapter(List<Transaction> transactions, OnTransactionDeleteListener deleteListener) {
+    public interface OnTransactionEditListener {
+        void onEdit(Transaction transaction);
+    }
+
+    public TransactionAdapter(List<Transaction> transactions, OnTransactionDeleteListener deleteListener, OnTransactionEditListener editListener) {
         this.transactions = transactions;
         this.deleteListener = deleteListener;
+        this.editListener = editListener;
     }
 
     @NonNull
@@ -39,7 +45,6 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         holder.descriptionText.setText(transaction.getDescription());
         holder.dateText.setText(transaction.getDate());
 
-        // Color coding based on type
         if ("Income".equals(transaction.getType())) {
             holder.amountText.setTextColor(holder.itemView.getContext().getColor(android.R.color.holo_green_dark));
         } else {
@@ -47,6 +52,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
 
         holder.deleteBtn.setOnClickListener(v -> deleteListener.onDelete(transaction));
+
+        holder.itemView.setOnClickListener(v -> editListener.onEdit(transaction));
     }
 
     @Override
